@@ -10,44 +10,56 @@ class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("PET")),
+      appBar:
+          AppBar(title: const Text("PET"), backgroundColor: Colors.pink[200]),
       body: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
+        padding: const EdgeInsets.only(top: 40.0),
         child: Column(
           children: [
             Center(
               child: Container(
-                  width: 300,
-                  height: 200,
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: const Color.fromARGB(255, 251, 174, 200)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IndividualStatus(
-                              status: pet.getStatus(StatusType.FOOD)),
-                          IndividualStatus(
-                              status: pet.getStatus(StatusType.BATHROOM))
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          IndividualStatus(
-                              status: pet.getStatus(StatusType.LOVE)),
-                          IndividualStatus(
-                              status: pet.getStatus(StatusType.WATER))
-                        ],
-                      ),
-                    ],
-                  )),
+                width: 300,
+                height: 150,
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 205, 205, 205)
+                          .withOpacity(0.3),
+                      spreadRadius: 3,
+                      blurRadius: 4,
+                      offset: Offset(3, 9), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IndividualStatus(
+                            status: pet.getStatus(StatusType.FOOD)),
+                        IndividualStatus(
+                            status: pet.getStatus(StatusType.BATHROOM))
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IndividualStatus(
+                            status: pet.getStatus(StatusType.LOVE)),
+                        IndividualStatus(
+                            status: pet.getStatus(StatusType.WATER))
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 50),
@@ -65,10 +77,35 @@ class GamePage extends StatelessWidget {
                 ),
               ),
             ),
-            Text(pet.getStateImage().toString()),
+            Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 30),
+              child: Text(
+                pet.getStateImage().toString(),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 25),
+              ),
+            ),
             Row(
-              children: [StatusButton(status: pet.getStatus(StatusType.FOOD))],
-            )
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                StatusButton(status: pet.getStatus(StatusType.FOOD)),
+                StatusButton(
+                  status: pet.getStatus(StatusType.BATHROOM),
+                ),
+              ],
+            ),
+            const Padding(padding: EdgeInsets.only(top: 30)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                StatusButton(status: pet.getStatus(StatusType.LOVE)),
+                StatusButton(
+                  status: pet.getStatus(StatusType.WATER),
+                ),
+              ],
+            ),
           ],
         ),
       ),

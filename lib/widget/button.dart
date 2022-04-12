@@ -7,9 +7,20 @@ class StatusButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => {status.increaseAmount()},
-      child: Text(status.getType()),
+    return SizedBox(
+      width: 130,
+      child: ElevatedButton(
+        onPressed: () => {status.increaseAmount()},
+        style: ElevatedButton.styleFrom(
+          primary: Colors.pink[100],
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(status.getType()),
+        ),
+      ),
     );
   }
 }

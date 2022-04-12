@@ -11,10 +11,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primaryColor: Colors.pink[200]),
       home: const Start(),
     );
   }
@@ -27,67 +26,65 @@ class Start extends StatelessWidget {
   Widget build(BuildContext context) {
     late Pet chosenPet;
     return Scaffold(
-      appBar: AppBar(title: const Text("PET")),
+      appBar: AppBar(
+        title: const Text("PET"),
+        backgroundColor: Colors.pink[200],
+      ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Padding(
-              padding: EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.only(bottom: 20, top: 100),
               child: Text(
                 "Choose Your Pet",
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               )),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.pink[200],
-                      padding: const EdgeInsets.all(10)),
-                  onPressed: () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GamePage(pet: Dog("KIKI"))),
-                    )
-                  },
-                  child: Container(
-                    height: 120,
-                    width: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.pink[200],
-                      image: const DecorationImage(
-                        image: AssetImage('assets/dog/happy.png'),
-                        fit: BoxFit.cover,
-                      ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.pink[100],
+                  padding: const EdgeInsets.all(10),
+                ),
+                onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GamePage(pet: Dog("KIKI"))),
+                  )
+                },
+                child: Container(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.pink[100],
+                    image: const DecorationImage(
+                      image: AssetImage('assets/dog/happy.png'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.pink[200],
-                      padding: const EdgeInsets.all(10)),
-                  onPressed: () => {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => GamePage(pet: Cat("LULU"))),
-                    )
-                  },
-                  child: Container(
-                    height: 120,
-                    width: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.pink[200],
-                      image: const DecorationImage(
-                        image: AssetImage('assets/cat/happy.png'),
-                        fit: BoxFit.cover,
-                      ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.pink[100],
+                    padding: const EdgeInsets.all(10)),
+                onPressed: () => {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GamePage(pet: Cat("LULU"))),
+                  )
+                },
+                child: Container(
+                  height: 120,
+                  width: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.pink[100],
+                    image: const DecorationImage(
+                      image: AssetImage('assets/cat/happy.png'),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
