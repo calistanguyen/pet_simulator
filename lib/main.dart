@@ -50,7 +50,7 @@ class Start extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => GamePage(pet: Dog("KIKI"))),
+                          builder: (context) => GamePage(pet: Dog())),
                     )
                   },
                   child: Container(
@@ -76,7 +76,7 @@ class Start extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => GamePage(pet: Cat("LULU"))),
+                          builder: (context) => GamePage(pet: Cat())),
                     )
                   },
                   child: Container(
