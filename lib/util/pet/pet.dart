@@ -15,6 +15,7 @@ abstract class Pet {
   String _stateDead = "";
   String _stateSad = "";
   String _stateHappy = "";
+  String name = "";
 
   Status getStatus(StatusType statusType) {
     switch (statusType) {
@@ -64,7 +65,8 @@ abstract class Pet {
 }
 
 class Cat extends Pet {
-  Cat() {
+  Cat(String name) {
+    this.name = name;
     _stateHappy = 'assets/cat/happy.png';
     _stateSad = 'assets/cat/sad.png';
     _stateDead = 'assets/cat/dead.png';
@@ -72,7 +74,8 @@ class Cat extends Pet {
 }
 
 class Dog extends Pet {
-  Dog() {
+  Dog(String name) {
+    this.name = name;
     _stateHappy = 'assets/dog/happy.png';
     _stateSad = 'assets/dog/sad.png';
     _stateDead = 'assets/dog/dead.png';
