@@ -1,16 +1,7 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:pet_simulator/util/pet/pet.dart';
-
-class Status {
-  int _amount;
-  int MINAMOUNT = 0;
-  int MAXAMOUNT = 4;
-
-  Status(
-    this._amount,
-  ) {
-    _amount = MAXAMOUNT;
-  }
+abstract class Status {
+  int _amount = 4;
+  int minAmount = 0;
+  int maxAmount = 4;
 
   void increaseAmount() {
     _amount += 1;
@@ -24,14 +15,11 @@ class Status {
     return _amount;
   }
 
-  String getType() {
-    return "Status";
-  }
+  String getType();
 }
 
 class LoveStatus extends Status {
-  LoveStatus(int amount) : super(amount);
-
+  LoveStatus();
   @override
   String getType() {
     return "LOVE";
@@ -39,7 +27,7 @@ class LoveStatus extends Status {
 }
 
 class WaterStatus extends Status {
-  WaterStatus(int amount) : super(amount);
+  WaterStatus();
   @override
   String getType() {
     return "WATER";
@@ -47,7 +35,9 @@ class WaterStatus extends Status {
 }
 
 class BathroomStatus extends Status {
-  BathroomStatus(int amount) : super(amount);
+  BathroomStatus() {
+    _amount = 0;
+  }
   @override
   String getType() {
     return "POOP";
@@ -55,7 +45,7 @@ class BathroomStatus extends Status {
 }
 
 class FoodStatus extends Status {
-  FoodStatus(int amount) : super(amount);
+  FoodStatus();
   @override
   String getType() {
     return "FOOD";

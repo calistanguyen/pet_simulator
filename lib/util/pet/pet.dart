@@ -1,32 +1,21 @@
+// ignore_for_file: constant_identifier_names
+
 import 'status.dart';
 
 enum StatusType { LOVE, BATHROOM, WATER, FOOD }
 enum PetState { HAPPY, SAD, DEAD }
 
-class Pet {
-  late String _petName;
-  late Status _loveStatus;
-  late Status _waterStatus;
-  late Status _bathroomStatus;
-  late Status _foodStatus;
-  late PetState _state;
+abstract class Pet {
+  final Status _loveStatus = LoveStatus();
+  final Status _waterStatus = WaterStatus();
+  final Status _bathroomStatus = BathroomStatus();
+  final Status _foodStatus = FoodStatus();
+  PetState _state = PetState.HAPPY;
 
-  final String _stateDead = "";
-  final String _stateSad = "";
-  final String _stateHappy = "";
-
-  Pet(String chosenPetName) {
-    _petName = chosenPetName;
-    _loveStatus = LoveStatus(4);
-    _waterStatus = WaterStatus(4);
-    _bathroomStatus = BathroomStatus(4);
-    _foodStatus = FoodStatus(4);
-    _state = PetState.HAPPY;
-  }
-
-  String getPetName() {
-    return _petName;
-  }
+  String _stateDead = "";
+  String _stateSad = "";
+  String _stateHappy = "";
+  String name = "";
 
   Status getStatus(StatusType statusType) {
     switch (statusType) {
@@ -44,12 +33,12 @@ class Pet {
   //need to be updated later
   PetState checkState() {
     if (_loveStatus.getAmount() <= 2 ||
-        _bathroomStatus.getAmount() <= 2 ||
+        _bathroomStatus.getAmount() >= 3 ||
         _foodStatus.getAmount() <= 2 ||
         _waterStatus.getAmount() <= 2) {
       _state = PetState.SAD;
     } else if (_loveStatus.getAmount() >= 3 &&
-        _bathroomStatus.getAmount() >= 3 &&
+        _bathroomStatus.getAmount() <= 2 &&
         _foodStatus.getAmount() >= 3 &&
         _waterStatus.getAmount() >= 3) {
       _state = PetState.HAPPY;
@@ -76,21 +65,19 @@ class Pet {
 }
 
 class Cat extends Pet {
-  @override
-  final String _stateHappy = 'assets/cat/happy.png';
-  @override
-  final String _stateSad = 'assets/cat/sad.png';
-  @override
-  final String _stateDead = 'assets/cat/dead.png';
-  Cat(String chosenPetName) : super(chosenPetName);
+  Cat(String name) {
+    this.name = name;
+    _stateHappy = 'assets/cat/happy.png';
+    _stateSad = 'assets/cat/sad.png';
+    _stateDead = 'assets/cat/dead.png';
+  }
 }
 
 class Dog extends Pet {
-  @override
-  final String _stateHappy = 'assets/dog/happy.png';
-  @override
-  final String _stateSad = 'assets/dog/sad.png';
-  @override
-  final String _stateDead = 'assets/dog/dead.png';
-  Dog(String chosenPet) : super(chosenPet);
+  Dog(String name) {
+    this.name = name;
+    _stateHappy = 'assets/dog/happy.png';
+    _stateSad = 'assets/dog/sad.png';
+    _stateDead = 'assets/dog/dead.png';
+  }
 }
