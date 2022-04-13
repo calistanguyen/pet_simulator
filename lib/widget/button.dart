@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:pet_simulator/util/pet/pet.dart';
 import 'package:pet_simulator/util/pet/status.dart';
 
 class StatusButton extends StatelessWidget {
-  const StatusButton({Key? key, required this.status}) : super(key: key);
+  const StatusButton({Key? key, required this.status, required this.onPress})
+      : super(key: key);
   final Status status;
+  final Function(StatusType) onPress;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 130,
       child: ElevatedButton(
-        onPressed: () => {status.increaseAmount()},
+        onPressed: () {
+          onPress(status.getType());
+        },
         style: ElevatedButton.styleFrom(
           primary: Colors.pink[100],
           shape:
@@ -18,7 +23,7 @@ class StatusButton extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Text(status.getType()),
+          child: Text(status.getName()),
         ),
       ),
     );
