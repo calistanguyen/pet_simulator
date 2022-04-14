@@ -13,11 +13,18 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
+  bool startGame = false;
+  final stopwatch = Stopwatch();
+  late Timer timer;
   @override
   void initState() {
     super.initState();
+  }
+
+  void startingGame() {
     if (widget.pet.getState() != PetState.DEAD) {
-      Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      startGame = true;
+      timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         if (mounted) {
           setState(() {
             widget.pet.statusChange.statusChange(widget.pet);
@@ -25,6 +32,14 @@ class _GamePageState extends State<GamePage> {
           });
         }
       });
+    }
+  }
+
+  void stopGame() {
+    if (widget.pet.getState() == PetState.DEAD) {
+      stopwatch.stop();
+      startGame = false;
+      timer.cancel();
     }
   }
 
@@ -41,92 +56,114 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  bool isDead() {
+    if (widget.pet.getState() != PetState.DEAD) {
+      return false;
+    }
+    stopGame();
+    return true;
+  }
+
+//https://itnext.io/create-a-stopwatch-app-with-flutter-f0dc6a176b8a#:~:text=Flutter%20provided%20a%20Stopwatch%20class,elapsedMilliseconds%20.
+  String formatTime(int milliseconds) {
+    var secs = milliseconds ~/ 1000;
+    var hours = (secs ~/ 3600).toString().padLeft(2, '0');
+    var minutes = ((secs % 3600) ~/ 60).toString().padLeft(2, '0');
+    var seconds = (secs % 60).toString().padLeft(2, '0');
+    return "$hours:$minutes:$seconds";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
           AppBar(title: const Text("PET"), backgroundColor: Colors.pink[200]),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 40.0),
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                width: 300,
-                height: 150,
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color.fromARGB(255, 205, 205, 205)
-                          .withOpacity(0.3),
-                      spreadRadius: 3,
-                      blurRadius: 4,
-                      offset: const Offset(3, 9), // changes position of shadow
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IndividualStatus(
-                            status: widget.pet.getStatus(StatusType.FOOD)),
-                        IndividualStatus(
-                            status: widget.pet.getStatus(StatusType.BATHROOM))
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IndividualStatus(
-                            status: widget.pet.getStatus(StatusType.LOVE)),
-                        IndividualStatus(
-                            status: widget.pet.getStatus(StatusType.WATER))
-                      ],
-                    ),
-                  ],
-                ),
+      body: Column(
+        children: [
+          Align(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0, bottom: 20, right: 20),
+              child: Text(
+                formatTime(stopwatch.elapsedMilliseconds),
+                style: const TextStyle(fontSize: 30),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 50),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 200,
-                      width: 200,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(widget.pet.getStateImage()),
-                          fit: BoxFit.cover,
-                        ),
+            alignment: Alignment.topRight,
+          ),
+          Center(
+            child: Container(
+              width: 300,
+              height: 150,
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(255, 205, 205, 205)
+                        .withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 4,
+                    offset: const Offset(3, 9), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IndividualStatus(
+                          status: widget.pet.getStatus(StatusType.FOOD)),
+                      IndividualStatus(
+                          status: widget.pet.getStatus(StatusType.BATHROOM))
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IndividualStatus(
+                          status: widget.pet.getStatus(StatusType.LOVE)),
+                      IndividualStatus(
+                          status: widget.pet.getStatus(StatusType.WATER))
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Container(
+                    height: 200,
+                    width: 200,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(widget.pet.getStateImage()),
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    widget.pet.getState() == PetState.DEAD
-                        ? Text("I died :(")
-                        : Text("")
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 30),
-              child: Text(
-                widget.pet.getStateImage().toString(),
-                style:
-                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 25),
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20, bottom: 30),
+            child: Text(
+              widget.pet.getStateImage().toString(),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 25),
             ),
-            Row(
+          ),
+          Visibility(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -140,23 +177,77 @@ class _GamePageState extends State<GamePage> {
                 ),
               ],
             ),
-            const Padding(padding: EdgeInsets.only(top: 30)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                StatusButton(
-                  status: widget.pet.getStatus(StatusType.LOVE),
-                  onPress: buttonPress,
+            visible: !isDead() && startGame,
+          ),
+          Visibility(
+              visible: !startGame && !isDead(),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    startGame = true;
+                    stopwatch.start();
+                    startingGame();
+                  });
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    "Start Game",
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
-                StatusButton(
-                  status: widget.pet.getStatus(StatusType.WATER),
-                  onPress: buttonPress,
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.pink[100],
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
                 ),
-              ],
+              )),
+          Visibility(
+              visible: isDead(),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    widget.pet.petReset();
+                    stopwatch.reset();
+                    stopwatch.start();
+                    startGame = true;
+                    startingGame();
+                  });
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    "Try Again",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.pink[100],
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                ),
+              )),
+          Visibility(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  StatusButton(
+                    status: widget.pet.getStatus(StatusType.LOVE),
+                    onPress: buttonPress,
+                  ),
+                  StatusButton(
+                    status: widget.pet.getStatus(StatusType.WATER),
+                    onPress: buttonPress,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+            visible: !isDead() && startGame,
+          ),
+        ],
       ),
     );
   }
