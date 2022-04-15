@@ -8,10 +8,10 @@ enum StatusType { LOVE, BATHROOM, WATER, FOOD }
 enum PetState { HAPPY, SAD, DEAD }
 
 abstract class Pet {
-  final Status _loveStatus = LoveStatus();
-  final Status _waterStatus = WaterStatus();
-  final Status _bathroomStatus = BathroomStatus();
-  final Status _foodStatus = FoodStatus();
+  Status _loveStatus = LoveStatus();
+  Status _waterStatus = WaterStatus();
+  Status _bathroomStatus = BathroomStatus();
+  Status _foodStatus = FoodStatus();
   PetState _state = PetState.HAPPY;
 
   String _stateDead = "";
@@ -70,6 +70,14 @@ abstract class Pet {
       case PetState.SAD:
         return _stateSad;
     }
+  }
+
+  void petReset() {
+    _loveStatus = LoveStatus();
+    _waterStatus = WaterStatus();
+    _bathroomStatus = BathroomStatus();
+    _foodStatus = FoodStatus();
+    _state = PetState.HAPPY;
   }
 }
 
