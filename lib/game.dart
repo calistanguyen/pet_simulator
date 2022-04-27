@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pet_simulator/util/pet/pet.dart';
 import 'package:pet_simulator/util/pet/pet_command.dart';
@@ -15,6 +16,9 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
+  bool mispressed = false;
+  int disabledButton = -1;
+  int seconds = 0;
   bool startGame = false;
   final stopwatch = Stopwatch();
   late Timer timer;
@@ -30,6 +34,11 @@ class _GamePageState extends State<GamePage> {
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         if (mounted) {
           setState(() {
+            seconds += 1;
+            if (mispressed && seconds % 4 == 0) {
+              disabledButton = -1;
+              mispressed = false;
+            }
             widget.pet.statusChange.statusChange(widget.pet);
             widget.pet.checkState();
           });
@@ -65,11 +74,21 @@ class _GamePageState extends State<GamePage> {
 
   void buttonPress(StatusType statusType) {
     if (widget.pet.getState() != PetState.DEAD) {
-      setState(() {
-        setCommand(statusType);
-        invoker.executeCommand();
-        widget.pet.checkState();
-      });
+      bool alreadyFull = widget.pet.checkStatusAlreadyFulfilled(statusType);
+      if (!alreadyFull) {
+        setState(() {
+          setCommand(statusType);
+          invoker.executeCommand();
+          widget.pet.checkState();
+        });
+      } else {
+        setState(() {
+          mispressed = true;
+          widget.pet.checkState();
+          Random random = Random();
+          disabledButton = random.nextInt(4) + 1;
+        });
+      }
     }
   }
 
@@ -185,13 +204,13 @@ class _GamePageState extends State<GamePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 StatusButton(
-                  status: widget.pet.getStatus(StatusType.FOOD),
-                  onPress: buttonPress,
-                ),
+                    status: widget.pet.getStatus(StatusType.FOOD),
+                    onPress: buttonPress,
+                    enabled: !(disabledButton == 1)),
                 StatusButton(
-                  status: widget.pet.getStatus(StatusType.BATHROOM),
-                  onPress: buttonPress,
-                ),
+                    status: widget.pet.getStatus(StatusType.BATHROOM),
+                    onPress: buttonPress,
+                    enabled: !(disabledButton == 2)),
               ],
             ),
             visible: !isDead() && startGame,
@@ -228,6 +247,8 @@ class _GamePageState extends State<GamePage> {
                     stopwatch.reset();
                     stopwatch.start();
                     startGame = true;
+                    disabledButton = -1;
+                    mispressed = false;
                     startingGame();
                   });
                 },
@@ -252,13 +273,13 @@ class _GamePageState extends State<GamePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   StatusButton(
-                    status: widget.pet.getStatus(StatusType.LOVE),
-                    onPress: buttonPress,
-                  ),
+                      status: widget.pet.getStatus(StatusType.LOVE),
+                      onPress: buttonPress,
+                      enabled: !(disabledButton == 3)),
                   StatusButton(
-                    status: widget.pet.getStatus(StatusType.WATER),
-                    onPress: buttonPress,
-                  ),
+                      status: widget.pet.getStatus(StatusType.WATER),
+                      onPress: buttonPress,
+                      enabled: !(disabledButton == 4)),
                 ],
               ),
             ),
