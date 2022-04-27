@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:pet_simulator/util/observer/subject.dart';
 import 'package:pet_simulator/util/pet/pet.dart';
 import 'package:pet_simulator/util/pet/pet_command.dart';
 import 'package:pet_simulator/util/pet/pet_command_invoker.dart';
 import 'package:pet_simulator/util/pet/status.dart';
 import 'package:pet_simulator/widget/button.dart';
+import 'package:pet_simulator/widget/scoreboard.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({Key? key, required this.pet}) : super(key: key);
@@ -22,10 +26,15 @@ class _GamePageState extends State<GamePage> {
   bool startGame = false;
   final stopwatch = Stopwatch();
   late Timer timer;
+  Publisher publisher = new Publisher();
+  bool petDead = false;
   PetCommandInvoker invoker = PetCommandInvoker();
+  String description = "";
+  List<String> scores = [];
   @override
   void initState() {
     super.initState();
+    _read();
   }
 
   void startingGame() {
@@ -50,9 +59,16 @@ class _GamePageState extends State<GamePage> {
   void stopGame() {
     if (widget.pet.getState() == PetState.DEAD) {
       stopwatch.stop();
+      publisher.setTime(stopwatch.elapsedMilliseconds);
       startGame = false;
       timer.cancel();
     }
+  }
+
+  void changeDescription(String info) {
+    setState(() {
+      description = info;
+    });
   }
 
   void setCommand(StatusType statusType) {
@@ -94,10 +110,30 @@ class _GamePageState extends State<GamePage> {
 
   bool isDead() {
     if (widget.pet.getState() != PetState.DEAD) {
-      return false;
+      return petDead;
     }
+    setState(() {
+      petDead = true;
+      _read();
+    });
     stopGame();
-    return true;
+    return petDead;
+  }
+
+  Future<String> _getDirPath() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return dir.path;
+  }
+
+  Future<List<String>> _read() async {
+    try {
+      final path = await _getDirPath();
+      File file = File('$path/scores.txt');
+      return file.readAsLines();
+    } catch (e) {
+      print("Couldn't read file");
+    }
+    return [];
   }
 
 //https://itnext.io/create-a-stopwatch-app-with-flutter-f0dc6a176b8a#:~:text=Flutter%20provided%20a%20Stopwatch%20class,elapsedMilliseconds%20.
@@ -126,49 +162,80 @@ class _GamePageState extends State<GamePage> {
             ),
             alignment: Alignment.topRight,
           ),
-          Center(
-            child: Container(
-              width: 300,
-              height: 150,
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color.fromARGB(255, 205, 205, 205)
-                        .withOpacity(0.3),
-                    spreadRadius: 3,
-                    blurRadius: 4,
-                    offset: const Offset(3, 9), // changes position of shadow
-                  ),
-                ],
+          Visibility(
+            visible: !isDead(),
+            child: Center(
+              child: Container(
+                width: 300,
+                height: 150,
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 205, 205, 205)
+                          .withOpacity(0.3),
+                      spreadRadius: 3,
+                      blurRadius: 4,
+                      offset: const Offset(3, 9), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IndividualStatus(
+                            status: widget.pet.getStatus(StatusType.FOOD)),
+                        IndividualStatus(
+                            status: widget.pet.getStatus(StatusType.BATHROOM))
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IndividualStatus(
+                            status: widget.pet.getStatus(StatusType.LOVE)),
+                        IndividualStatus(
+                            status: widget.pet.getStatus(StatusType.WATER))
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IndividualStatus(
-                          status: widget.pet.getStatus(StatusType.FOOD)),
-                      IndividualStatus(
-                          status: widget.pet.getStatus(StatusType.BATHROOM))
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IndividualStatus(
-                          status: widget.pet.getStatus(StatusType.LOVE)),
-                      IndividualStatus(
-                          status: widget.pet.getStatus(StatusType.WATER))
-                    ],
-                  ),
-                ],
-              ),
+            ),
+          ),
+          Visibility(
+            visible: petDead,
+            // child: Scoreboard(
+            //   scores: publisher.getScores(),
+            // )
+            child: FutureBuilder<List<String>?>(
+              future: _read(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    } else {
+                      return Scoreboard(
+                        scores: snapshot.data!.toList(),
+                      );
+                    }
+
+                  default:
+                    return Text('Unhandle State');
+                }
+              },
             ),
           ),
           Padding(
@@ -194,29 +261,62 @@ class _GamePageState extends State<GamePage> {
           Padding(
             padding: const EdgeInsets.only(top: 20, bottom: 30),
             child: Text(
-              widget.pet.getStateImage().toString(),
+              description,
               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 25),
             ),
           ),
           Visibility(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Column(
               children: [
-                StatusButton(
-                    status: widget.pet.getStatus(StatusType.FOOD),
-                    onPress: buttonPress,
-                    enabled: !(disabledButton == 1)),
-                StatusButton(
-                    status: widget.pet.getStatus(StatusType.BATHROOM),
-                    onPress: buttonPress,
-                    enabled: !(disabledButton == 2)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    StatusButton(
+                      status: widget.pet.getStatus(StatusType.FOOD),
+                      onPress: buttonPress,
+                      enabled: !(disabledButton == 1),
+                      description: 'NOM NOM',
+                      callback: changeDescription,
+                    ),
+                    StatusButton(
+                      status: widget.pet.getStatus(StatusType.BATHROOM),
+                      onPress: buttonPress,
+                      enabled: !(disabledButton == 2),
+                      description: 'WHEWW',
+                      callback: changeDescription,
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      StatusButton(
+                        status: widget.pet.getStatus(StatusType.LOVE),
+                        onPress: buttonPress,
+                        enabled: !(disabledButton == 3),
+                        description: 'UWU',
+                        callback: changeDescription,
+                      ),
+                      StatusButton(
+                        status: widget.pet.getStatus(StatusType.WATER),
+                        onPress: buttonPress,
+                        enabled: !(disabledButton == 4),
+                        description: 'AHHH~',
+                        callback: changeDescription,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-            visible: !isDead() && startGame,
+            visible: !petDead && startGame,
           ),
           Visibility(
-              visible: !startGame && !isDead(),
+              visible: !startGame && !petDead,
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -239,7 +339,7 @@ class _GamePageState extends State<GamePage> {
                 ),
               )),
           Visibility(
-              visible: isDead(),
+              visible: petDead,
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -247,6 +347,7 @@ class _GamePageState extends State<GamePage> {
                     stopwatch.reset();
                     stopwatch.start();
                     startGame = true;
+                    petDead = false;
                     disabledButton = -1;
                     mispressed = false;
                     startingGame();
@@ -265,26 +366,6 @@ class _GamePageState extends State<GamePage> {
                       borderRadius: BorderRadius.circular(15)),
                 ),
               )),
-          Visibility(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  StatusButton(
-                      status: widget.pet.getStatus(StatusType.LOVE),
-                      onPress: buttonPress,
-                      enabled: !(disabledButton == 3)),
-                  StatusButton(
-                      status: widget.pet.getStatus(StatusType.WATER),
-                      onPress: buttonPress,
-                      enabled: !(disabledButton == 4)),
-                ],
-              ),
-            ),
-            visible: !isDead() && startGame,
-          ),
         ],
       ),
     );
