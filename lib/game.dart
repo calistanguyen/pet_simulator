@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:pet_simulator/util/observer/subject.dart';
 import 'package:pet_simulator/util/pet/pet.dart';
 import 'package:pet_simulator/util/pet/status.dart';
 import 'package:pet_simulator/widget/button.dart';
@@ -16,6 +17,8 @@ class _GamePageState extends State<GamePage> {
   bool startGame = false;
   final stopwatch = Stopwatch();
   late Timer timer;
+  Publisher publisher = new Publisher();
+  bool petDead = false;
   @override
   void initState() {
     super.initState();
@@ -39,6 +42,7 @@ class _GamePageState extends State<GamePage> {
     if (widget.pet.getState() == PetState.DEAD) {
       stopwatch.stop();
       startGame = false;
+      publisher.setTime(stopwatch.elapsedMilliseconds);
       timer.cancel();
     }
   }
@@ -58,10 +62,14 @@ class _GamePageState extends State<GamePage> {
 
   bool isDead() {
     if (widget.pet.getState() != PetState.DEAD) {
-      return false;
+      return petDead;
     }
+    setState(() {
+      petDead = true;
+    });
+
     stopGame();
-    return true;
+    return petDead;
   }
 
 //https://itnext.io/create-a-stopwatch-app-with-flutter-f0dc6a176b8a#:~:text=Flutter%20provided%20a%20Stopwatch%20class,elapsedMilliseconds%20.
@@ -163,24 +171,45 @@ class _GamePageState extends State<GamePage> {
             ),
           ),
           Visibility(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: Column(
               children: [
-                StatusButton(
-                  status: widget.pet.getStatus(StatusType.FOOD),
-                  onPress: buttonPress,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    StatusButton(
+                      status: widget.pet.getStatus(StatusType.FOOD),
+                      onPress: buttonPress,
+                    ),
+                    StatusButton(
+                      status: widget.pet.getStatus(StatusType.BATHROOM),
+                      onPress: buttonPress,
+                    ),
+                  ],
                 ),
-                StatusButton(
-                  status: widget.pet.getStatus(StatusType.BATHROOM),
-                  onPress: buttonPress,
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      StatusButton(
+                        status: widget.pet.getStatus(StatusType.LOVE),
+                        onPress: buttonPress,
+                      ),
+                      StatusButton(
+                        status: widget.pet.getStatus(StatusType.WATER),
+                        onPress: buttonPress,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
             visible: !isDead() && startGame,
           ),
           Visibility(
-              visible: !startGame && !isDead(),
+              visible: !startGame && !petDead,
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -203,7 +232,7 @@ class _GamePageState extends State<GamePage> {
                 ),
               )),
           Visibility(
-              visible: isDead(),
+              visible: petDead,
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -211,6 +240,7 @@ class _GamePageState extends State<GamePage> {
                     stopwatch.reset();
                     stopwatch.start();
                     startGame = true;
+                    petDead = false;
                     startingGame();
                   });
                 },
@@ -227,26 +257,6 @@ class _GamePageState extends State<GamePage> {
                       borderRadius: BorderRadius.circular(15)),
                 ),
               )),
-          Visibility(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  StatusButton(
-                    status: widget.pet.getStatus(StatusType.LOVE),
-                    onPress: buttonPress,
-                  ),
-                  StatusButton(
-                    status: widget.pet.getStatus(StatusType.WATER),
-                    onPress: buttonPress,
-                  ),
-                ],
-              ),
-            ),
-            visible: !isDead() && startGame,
-          ),
         ],
       ),
     );
