@@ -34,6 +34,33 @@ abstract class Pet {
     }
   }
 
+  bool checkStatusAlreadyFulfilled(StatusType statusType) {
+    Status status = getStatus(statusType);
+    if (statusType == StatusType.BATHROOM && status.getAmount() == 0) {
+      return true;
+    } else if (status.getAmount() == 4) {
+      return true;
+    }
+    return false;
+  }
+
+  void changeStatusCommand(StatusType statusType) {
+    switch (statusType) {
+      case StatusType.WATER:
+        _waterStatus.increaseAmount();
+        break;
+      case StatusType.BATHROOM:
+        _bathroomStatus.decreaseAmount();
+        break;
+      case StatusType.LOVE:
+        _loveStatus.increaseAmount();
+        break;
+      case StatusType.FOOD:
+        _foodStatus.increaseAmount();
+        break;
+    }
+  }
+
   //need to be updated later
   PetState checkState() {
     if (_loveStatus.getAmount() <= 0 ||

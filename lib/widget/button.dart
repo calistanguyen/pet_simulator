@@ -3,21 +3,28 @@ import 'package:pet_simulator/util/pet/pet.dart';
 import 'package:pet_simulator/util/pet/status.dart';
 
 class StatusButton extends StatelessWidget {
-  const StatusButton({Key? key, required this.status, required this.onPress})
+  const StatusButton(
+      {Key? key,
+      required this.status,
+      required this.onPress,
+      required this.enabled})
       : super(key: key);
   final Status status;
   final Function(StatusType) onPress;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 130,
       child: ElevatedButton(
-        onPressed: () {
-          onPress(status.getType());
-        },
+        onPressed: enabled
+            ? () {
+                onPress(status.getType());
+              }
+            : null,
         style: ElevatedButton.styleFrom(
-          primary: Colors.pink[100],
+          primary: enabled ? Colors.pink[100] : Colors.grey,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),

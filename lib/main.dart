@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_simulator/util/pet/pet.dart';
+import 'package:pet_simulator/widget/scoreboard.dart';
 import 'game.dart';
 
 void main() {
@@ -91,6 +92,8 @@ class Start extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          const Scoreboard(scores: ["10", "5", "1"])
         ],
       ),
     );
