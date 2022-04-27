@@ -34,6 +34,23 @@ abstract class Pet {
     }
   }
 
+  void changeStatusCommand(StatusType statusType) {
+    switch (statusType) {
+      case StatusType.WATER:
+        _waterStatus.increaseAmount();
+        break;
+      case StatusType.BATHROOM:
+        _bathroomStatus.decreaseAmount();
+        break;
+      case StatusType.LOVE:
+        _loveStatus.increaseAmount();
+        break;
+      case StatusType.FOOD:
+        _foodStatus.increaseAmount();
+        break;
+    }
+  }
+
   //need to be updated later
   PetState checkState() {
     if (_loveStatus.getAmount() <= 0 ||

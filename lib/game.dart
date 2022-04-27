@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pet_simulator/util/pet/pet.dart';
+import 'package:pet_simulator/util/pet/pet_command.dart';
+import 'package:pet_simulator/util/pet/pet_command_invoker.dart';
 import 'package:pet_simulator/util/pet/status.dart';
 import 'package:pet_simulator/widget/button.dart';
 
@@ -16,6 +18,7 @@ class _GamePageState extends State<GamePage> {
   bool startGame = false;
   final stopwatch = Stopwatch();
   late Timer timer;
+  PetCommandInvoker invoker = PetCommandInvoker();
   @override
   void initState() {
     super.initState();
@@ -43,14 +46,28 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  void setCommand(StatusType statusType) {
+    switch (statusType) {
+      case StatusType.WATER:
+        invoker.setCommand(GiveWaterCommand(widget.pet));
+        break;
+      case StatusType.BATHROOM:
+        invoker.setCommand(BathroomCommand(widget.pet));
+        break;
+      case StatusType.LOVE:
+        invoker.setCommand(GiveLoveCommand(widget.pet));
+        break;
+      case StatusType.FOOD:
+        invoker.setCommand(FeedCommand(widget.pet));
+        break;
+    }
+  }
+
   void buttonPress(StatusType statusType) {
     if (widget.pet.getState() != PetState.DEAD) {
       setState(() {
-        if (statusType == StatusType.BATHROOM) {
-          widget.pet.getStatus(statusType).decreaseAmount();
-        } else {
-          widget.pet.getStatus(statusType).increaseAmount();
-        }
+        setCommand(statusType);
+        invoker.executeCommand();
         widget.pet.checkState();
       });
     }
