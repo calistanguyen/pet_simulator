@@ -34,6 +34,16 @@ abstract class Pet {
     }
   }
 
+  bool checkStatusAlreadyFulfilled(StatusType statusType) {
+    Status status = getStatus(statusType);
+    if (statusType == StatusType.BATHROOM && status.getAmount() == 0) {
+      return true;
+    } else if (status.getAmount() == 4) {
+      return true;
+    }
+    return false;
+  }
+
   void changeStatusCommand(StatusType statusType) {
     switch (statusType) {
       case StatusType.WATER:
