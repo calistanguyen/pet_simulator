@@ -3,14 +3,16 @@ import 'package:pet_simulator/util/observer/subject.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
+//OBSERVER PATTERN
 class Observer {
   void update(Subject subject, TypeUpdate typeUpdate) {}
 }
 
+//This observer keeps track of the top 3 high scores
 class HighScore implements Observer {
   List<String> text = [];
   List<int> scores = [];
-
+  //implementing Eager Singleton
   static final HighScore _instance = HighScore._();
 
   HighScore._();
@@ -22,6 +24,7 @@ class HighScore implements Observer {
     return dir.path;
   }
 
+  //check if the update is regarding the score
   @override
   void update(Subject subject, TypeUpdate typeUpdate) {
     subject as Publisher;
@@ -35,6 +38,7 @@ class HighScore implements Observer {
     }
   }
 
+  //write to the file in case there is a new high score
   Future<File> _write() async {
     String newText = "";
     int scoreSize = text.length;
@@ -50,6 +54,7 @@ class HighScore implements Observer {
     return file;
   }
 
+  //read the txt file
   Future<void> _read() async {
     try {
       final path = await _getDirPath();
@@ -60,12 +65,14 @@ class HighScore implements Observer {
     }
   }
 
+  //change string to int
   void convertTextToScore() {
     for (int i = 0; i < text.length; i++) {
       scores.add(int.parse(text[i]));
     }
   }
 
+  //change int to string
   void convertScoreToText() {
     text = [];
     for (int i = 0; i < scores.length; i++) {

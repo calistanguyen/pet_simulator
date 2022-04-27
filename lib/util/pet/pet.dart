@@ -7,6 +7,7 @@ import 'status.dart';
 enum StatusType { LOVE, BATHROOM, WATER, FOOD }
 enum PetState { HAPPY, SAD, DEAD }
 
+//pet class and all of its needed attributes
 abstract class Pet {
   Status _loveStatus = LoveStatus();
   Status _waterStatus = WaterStatus();
@@ -61,7 +62,7 @@ abstract class Pet {
     }
   }
 
-  //need to be updated later
+  //check each status to update how the pet is feeling
   PetState checkState() {
     if (_loveStatus.getAmount() <= 0 ||
         _bathroomStatus.getAmount() >= 4 ||
@@ -83,10 +84,12 @@ abstract class Pet {
     return _state;
   }
 
+  //get the state of the pet
   PetState getState() {
     return _state;
   }
 
+  //get the image according to how the pet is feeling
   String getStateImage() {
     PetState currentState = getState();
     switch (currentState) {

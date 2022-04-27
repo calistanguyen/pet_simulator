@@ -1,8 +1,15 @@
-# pet_simulator
 
-A new Flutter project.
+# pet_simulator
+### Team Members : Calista Nguyen & Vananh Le
+
+Take care of a pet is fun.
 
 ## Getting Started
+Language: Dart
+
+Install Dart and Flutter
+
+Command to Run: flutter run
 
 This project is a starting point for a Flutter application.
 
