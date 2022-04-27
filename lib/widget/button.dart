@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pet_simulator/util/pet/pet.dart';
 import 'package:pet_simulator/util/pet/status.dart';
 
+//This is a widget for the Status Button
 class StatusButton extends StatelessWidget {
   const StatusButton(
       {Key? key,

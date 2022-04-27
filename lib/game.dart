@@ -11,6 +11,7 @@ import 'package:pet_simulator/widget/button.dart';
 import 'package:pet_simulator/widget/scoreboard.dart';
 import 'package:path_provider/path_provider.dart';
 
+//This is the Page the game is running on
 class GamePage extends StatefulWidget {
   const GamePage({Key? key, required this.pet}) : super(key: key);
   final Pet pet;
@@ -20,13 +21,14 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
+  //setting up the timer and the pet for the game
   bool mispressed = false;
   int disabledButton = -1;
   int seconds = 0;
   bool startGame = false;
   final stopwatch = Stopwatch();
   late Timer timer;
-  Publisher publisher = new Publisher();
+  Publisher publisher = Publisher();
   bool petDead = false;
   PetCommandInvoker invoker = PetCommandInvoker();
   String description = "";
@@ -37,6 +39,7 @@ class _GamePageState extends State<GamePage> {
     _read();
   }
 
+  //check if the game is starting
   void startingGame() {
     if (widget.pet.getState() != PetState.DEAD) {
       startGame = true;
@@ -56,6 +59,7 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  //check if the game needs to stop
   void stopGame() {
     if (widget.pet.getState() == PetState.DEAD) {
       stopwatch.stop();
@@ -65,6 +69,7 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  //function to update the text based on the button clicked
   void changeDescription(String info) {
     setState(() {
       description = info;
@@ -88,6 +93,7 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  //handling when a button is pressed
   void buttonPress(StatusType statusType) {
     if (widget.pet.getState() != PetState.DEAD) {
       bool alreadyFull = widget.pet.checkStatusAlreadyFulfilled(statusType);
@@ -108,6 +114,7 @@ class _GamePageState extends State<GamePage> {
     }
   }
 
+  //checking if the pet is Dead
   bool isDead() {
     if (widget.pet.getState() != PetState.DEAD) {
       return petDead;
@@ -120,6 +127,7 @@ class _GamePageState extends State<GamePage> {
     return petDead;
   }
 
+  //get the txt file for the scoreboard
   Future<String> _getDirPath() async {
     final dir = await getApplicationDocumentsDirectory();
     return dir.path;
@@ -145,6 +153,7 @@ class _GamePageState extends State<GamePage> {
     return "$hours:$minutes:$seconds";
   }
 
+  //UI FOR THE GAME PAGE
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,7 +242,7 @@ class _GamePageState extends State<GamePage> {
                     }
 
                   default:
-                    return Text('Unhandle State');
+                    return const Text('Unhandle State');
                 }
               },
             ),
@@ -372,6 +381,7 @@ class _GamePageState extends State<GamePage> {
   }
 }
 
+//UI for the status Display
 class IndividualStatus extends StatelessWidget {
   const IndividualStatus({Key? key, required this.status}) : super(key: key);
   final Status status;

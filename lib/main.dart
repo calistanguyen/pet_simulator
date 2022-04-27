@@ -19,12 +19,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//UI for selecting the pet
 class Start extends StatelessWidget {
   const Start({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    late Pet chosenPet;
     return Scaffold(
       appBar: AppBar(
         title: const Text("PET"),

@@ -2,9 +2,7 @@
 
 import 'package:pet_simulator/util/observer/observer.dart';
 
-import '../pet/pet.dart';
-
-enum TypeUpdate { SCORE, CLICKSFOOD, CLICKSBATHROOM, CLICKSWATER, CLICKSLOVE }
+enum TypeUpdate { SCORE }
 
 class Subject {
   void register(Observer observer) {}
@@ -12,18 +10,11 @@ class Subject {
   void notifyObserver(TypeUpdate typeUpdate) {}
 }
 
+//keeps the list of observers
 class Publisher implements Subject {
-  late int totalPoopClicks;
-  late int totalLoveClicks;
-  late int totalWaterClicks;
-  late int totalFoodClicks;
   late int time;
   late List<Observer> observers;
   Publisher() {
-    totalFoodClicks = 0;
-    totalLoveClicks = 0;
-    totalPoopClicks = 0;
-    totalWaterClicks = 0;
     observers = [];
     register(HighScore.instance);
   }

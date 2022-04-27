@@ -1,5 +1,6 @@
 import 'package:pet_simulator/util/pet/pet.dart';
 
+//set up the get and set function for all of the Status
 abstract class Status {
   int _amount = 4;
   int minAmount = 0;
@@ -27,6 +28,7 @@ abstract class Status {
   String getName();
 }
 
+//Love Status
 class LoveStatus extends Status {
   LoveStatus();
   @override
@@ -40,6 +42,7 @@ class LoveStatus extends Status {
   }
 }
 
+//Water Status
 class WaterStatus extends Status {
   WaterStatus();
   @override
@@ -53,6 +56,7 @@ class WaterStatus extends Status {
   }
 }
 
+//Bathroom Status
 class BathroomStatus extends Status {
   BathroomStatus() {
     _amount = 0;
@@ -68,6 +72,7 @@ class BathroomStatus extends Status {
   }
 }
 
+//Food Status
 class FoodStatus extends Status {
   FoodStatus();
   @override
