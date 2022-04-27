@@ -25,7 +25,7 @@ class Publisher implements Subject {
     totalPoopClicks = 0;
     totalWaterClicks = 0;
     observers = [];
-    register(HighScore());
+    register(HighScore.instance);
   }
   @override
   void notifyObserver(TypeUpdate typeUpdate) {

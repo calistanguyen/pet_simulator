@@ -7,11 +7,15 @@ class StatusButton extends StatelessWidget {
       {Key? key,
       required this.status,
       required this.onPress,
-      required this.enabled})
+      required this.enabled,
+      required this.description,
+      required this.callback})
       : super(key: key);
   final Status status;
   final Function(StatusType) onPress;
+  final Function callback;
   final bool enabled;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +25,7 @@ class StatusButton extends StatelessWidget {
         onPressed: enabled
             ? () {
                 onPress(status.getType());
+                callback(description);
               }
             : null,
         style: ElevatedButton.styleFrom(

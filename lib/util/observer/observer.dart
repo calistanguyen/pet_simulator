@@ -8,15 +8,14 @@ class Observer {
 }
 
 class HighScore implements Observer {
-  late List<String> text;
-  late List<int> scores;
-  late File file;
+  List<String> text = [];
+  List<int> scores = [];
 
-  HighScore() {
-    text = [];
-    scores = [];
-    _read();
-  }
+  static final HighScore _instance = HighScore._();
+
+  HighScore._();
+
+  static HighScore get instance => _instance;
 
   Future<String> _getDirPath() async {
     final dir = await getApplicationDocumentsDirectory();
@@ -38,9 +37,15 @@ class HighScore implements Observer {
 
   Future<File> _write() async {
     String newText = "";
-    for (int i = 0; i < text.length; i++) {
+    int scoreSize = text.length;
+    if (text.length >= 3) {
+      scoreSize = 3;
+    }
+    for (int i = 0; i < scoreSize; i++) {
       newText += text[i] + '\n';
     }
+    final path = await _getDirPath();
+    File file = File('$path/scores.txt');
     file.writeAsString(newText);
     return file;
   }
@@ -48,7 +53,7 @@ class HighScore implements Observer {
   Future<void> _read() async {
     try {
       final path = await _getDirPath();
-      file = File('$path/scores.txt');
+      File file = File('$path/scores.txt');
       text = file.readAsLinesSync();
     } catch (e) {
       print("Couldn't read file");
