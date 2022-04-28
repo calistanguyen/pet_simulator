@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 //OBSERVER PATTERN
-class Observer {
+abstract class Observer {
   void update(Subject subject, TypeUpdate typeUpdate) {}
 }
 

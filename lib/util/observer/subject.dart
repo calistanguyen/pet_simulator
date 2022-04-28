@@ -4,7 +4,7 @@ import 'package:pet_simulator/util/observer/observer.dart';
 
 enum TypeUpdate { SCORE }
 
-class Subject {
+abstract class Subject {
   void register(Observer observer) {}
   void remove(Observer observer) {}
   void notifyObserver(TypeUpdate typeUpdate) {}
