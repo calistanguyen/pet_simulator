@@ -1,5 +1,6 @@
 import 'package:pet_simulator/util/pet/pet_command.dart';
 
+//Command pattern invoker that takes in PetCommand and calls execute
 class PetCommandInvoker {
   late PetCommand command;
 

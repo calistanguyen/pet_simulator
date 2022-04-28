@@ -20,8 +20,10 @@ abstract class Pet {
   String _stateHappy = "";
   String name = "";
 
+  //strategy pattern for status change
   late StatusChangeStrategy statusChange;
 
+  //function to get status of Pet
   Status getStatus(StatusType statusType) {
     switch (statusType) {
       case StatusType.WATER:
@@ -35,6 +37,7 @@ abstract class Pet {
     }
   }
 
+  //helper function to check if a status is already fulfilled which aids in what button gets disabled or not
   bool checkStatusAlreadyFulfilled(StatusType statusType) {
     Status status = getStatus(statusType);
     if (statusType == StatusType.BATHROOM && status.getAmount() == 0) {
@@ -45,6 +48,7 @@ abstract class Pet {
     return false;
   }
 
+  //command function in Pet that gets called by the invoker
   void changeStatusCommand(StatusType statusType) {
     switch (statusType) {
       case StatusType.WATER:

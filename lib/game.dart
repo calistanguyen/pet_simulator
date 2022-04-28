@@ -43,10 +43,13 @@ class _GamePageState extends State<GamePage> {
   void startingGame() {
     if (widget.pet.getState() != PetState.DEAD) {
       startGame = true;
+      //This timer keeps track of the periodic status changes for the pet
+      //the pet will get a random status change based on their StatusChange strategy every 1 second
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         if (mounted) {
           setState(() {
             seconds += 1;
+            //If a button is mispressed, itll be un disabled after 4 seconds
             if (mispressed && seconds % 4 == 0) {
               disabledButton = -1;
               mispressed = false;
@@ -76,6 +79,7 @@ class _GamePageState extends State<GamePage> {
     });
   }
 
+  //This sets the command for the status change
   void setCommand(StatusType statusType) {
     switch (statusType) {
       case StatusType.WATER:
@@ -96,15 +100,18 @@ class _GamePageState extends State<GamePage> {
   //handling when a button is pressed
   void buttonPress(StatusType statusType) {
     if (widget.pet.getState() != PetState.DEAD) {
+      //Checks if a status is already fulfilled for that particular button pressed
       bool alreadyFull = widget.pet.checkStatusAlreadyFulfilled(statusType);
       if (!alreadyFull) {
         setState(() {
+          //if not already full, call the execute command
           setCommand(statusType);
           invoker.executeCommand();
           widget.pet.checkState();
         });
       } else {
         setState(() {
+          //if status is already full, then it is a misspress and one button gets randomly disabled
           mispressed = true;
           widget.pet.checkState();
           Random random = Random();
